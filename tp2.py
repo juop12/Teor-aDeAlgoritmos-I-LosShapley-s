@@ -1,4 +1,5 @@
 from csv import reader
+from sys import argv
 #import pudb; pu.db
 
 class Caja:
@@ -7,47 +8,48 @@ class Caja:
 		self.alto = alto
 		self.id = identificacion
 
+	def __str__(self):
+		if(self.largo == 0):
+			return ''
+		cadena = str(self.id) + ":(A" + str(self.alto) + " / L" + str(self.largo) + ")"
+		return cadena
+
 class Repisa:
 	def __init__(self, largo):
 		self.largo = largo
-		self.cajas = []
 		self.espacioDisponible = largo
-		self.alturaMax = 0
 
 	def tiene_espacio(self ,espacioAConsultar):
 		return (self.espacioDisponible - espacioAConsultar) >= 0
 
 	def insertar_caja(self, caja):
 		if self.tiene_espacio(caja.largo):
-			self.cajas.append(caja)
-			self.alturaMax = max(self.alturaMax, caja.alto) 
 			self.espacioDisponible = self.espacioDisponible - caja.largo
 			return True
 		return False
-
-class Optimo:
-	def__init__(self, repisa, optimo_previo):
-		self.repisa = repisa
-		self.optimo_previo = optimo_previo
 		
 def levantar_cajas_csv(cajas, nombreDeArchivo):
     with open(nombreDeArchivo) as archivo:
-        for linea in reader(archivo): #n; n = cantidad de lineas (cantidad de socios)
+        for linea in reader(archivo): 
         	cajas.append(Caja(int(linea[0]), int(linea[1]), int(linea[2])))
            
     return cajas
 
 
-def ordenadar_almacen(cantidadCajas, largoRepisas, nombreDeArchivo):
-	cajas = []
-	cajas.append(Caja(0,0,0))
-	cajas = levantar_cajas_csv(cajas ,nombreDeArchivo)
+def ordenadar_almacen(cantidadCajas, largoRepisas, cajas):
+	
 	optimos = []
+	caminosOptimos = []
 	alturasMaximas = {}
+
 	for i in range(cantidadCajas + 1):
 		optimos.append(-1) 
+		caminosOptimos.append(0)
 	optimos[0] = 0
-	return opt(cajas ,cajas[cantidadCajas], alturasMaximas, optimos, largoRepisas)
+
+	opt(cajas ,cajas[cantidadCajas].id, alturasMaximas, optimos, caminosOptimos, largoRepisas)
+
+	return optimos, caminosOptimos
 
 
 def altura_maxima(matrizComparacion, cajas, inicio, fin):
@@ -63,32 +65,44 @@ def altura_maxima(matrizComparacion, cajas, inicio, fin):
 	return altura_maxima(matrizComparacion, cajas, inicio, fin)
 
 
-def opt(cajas, cajaActual, alturasMaximas, optimos, largoRepisas):
+def opt(cajas, idActual, alturasMaximas, optimos, caminosOptimos, largoRepisas):
 	
-	if optimos[cajaActual.id] != -1:
-		print('puta')
-		return optimos[cajaActual.id]
+	if optimos[idActual] != -1:
+		return optimos[idActual]
 
 	mejor_optimo = -1
 	nuevaRepisa = Repisa(largoRepisas)
 	i = 0
 
-	print(cajas[cajaActual.id].id)
-
-	while ((cajaActual.id - i) > 0) and nuevaRepisa.insertar_caja(cajas[cajaActual.id - i]):
-		print('entro')
+	while ((idActual - i) > 0) and nuevaRepisa.insertar_caja(cajas[idActual - i]):
 		i+= 1
-		optimo_calculado = opt(cajas, cajas[cajaActual.id - i], alturasMaximas, optimos, largoRepisas) + altura_maxima(alturasMaximas ,cajas ,cajaActual.id - i + 1,cajaActual.id)
+		optimo_calculado = opt(cajas, idActual - i, alturasMaximas, optimos, caminosOptimos, largoRepisas) + altura_maxima(alturasMaximas ,cajas ,idActual - i + 1,idActual)
 		if (mejor_optimo == -1) or (mejor_optimo > optimo_calculado):
 			mejor_optimo = optimo_calculado
+			optimo_previo = idActual - i
 
-	optimos[cajaActual.id] = mejor_optimo
-	print(optimos)
+	optimos[idActual] = mejor_optimo
+	caminosOptimos[idActual] = optimo_previo
 	return mejor_optimo
 
+def recuperar_solucion_optima(cajas, caminosOptimos, n):
+	if(n <= 0):
+		return
+	
+	for j in range(caminosOptimos[n],n):
+			print(cajas[j], end = ' ')
+	print("\n//////////////////////////////////////////////////////////\n")
+	recuperar_solucion_optima(cajas, caminosOptimos, caminosOptimos[n])
+
 def main():
-	print('a')
-	print(ordenadar_almacen(6, 3, "/home/pal/Desktop/tda/tpw/ejemplo/ejemplo3.csv"))
+	cajas = []
+	cajas.append(Caja(0,0,0))
+	cajas = levantar_cajas_csv(cajas , argv[3])
+	
+	optimos, caminosOptimos = ordenadar_almacen(int(argv[1]), int(argv[2]), cajas)
+
+	recuperar_solucion_optima(cajas, caminosOptimos, int(argv[1]))
+	print(f"\nla altura minima es : {optimos[-1]}")
 
 main()
 
