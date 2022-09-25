@@ -89,7 +89,7 @@ def recuperar_solucion_optima(cajas, caminosOptimos, n):
 	if(n <= 0):
 		return
 	
-	for j in range(caminosOptimos[n],n):
+	for j in range(caminosOptimos[n] + 1,n + 1):
 			print(cajas[j], end = ' ')
 	print("\n//////////////////////////////////////////////////////////\n")
 	recuperar_solucion_optima(cajas, caminosOptimos, caminosOptimos[n])
@@ -98,11 +98,13 @@ def main():
 	cajas = []
 	cajas.append(Caja(0,0,0))
 	cajas = levantar_cajas_csv(cajas , argv[3])
-	
-	optimos, caminosOptimos = ordenadar_almacen(int(argv[1]), int(argv[2]), cajas)
 
-	recuperar_solucion_optima(cajas, caminosOptimos, int(argv[1]))
-	print(f"\nla altura minima es : {optimos[-1]}")
+	optimo_a_buscar = min(int(argv[1]), len(cajas) - 1)
+
+	optimos, caminosOptimos = ordenadar_almacen(optimo_a_buscar, int(argv[2]), cajas)
+
+	recuperar_solucion_optima(cajas, caminosOptimos, optimo_a_buscar)
+	print(f"\nla altura minima de las {optimo_a_buscar} cajas es : {optimos[optimo_a_buscar]}")
 
 main()
 
