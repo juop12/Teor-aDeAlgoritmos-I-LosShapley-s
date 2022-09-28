@@ -49,7 +49,7 @@ def ordenadar_almacen(cantidadCajas, largoRepisas, cajas):
 
 	opt(cajas ,cajas[cantidadCajas].id, alturasMaximas, optimos, caminosOptimos, largoRepisas)
 
-	return optimos, caminosOptimos
+	return optimos, caminosOptimos, alturasMaximas
 
 
 def altura_maxima(matrizComparacion, cajas, inicio, fin):
@@ -85,14 +85,14 @@ def opt(cajas, idActual, alturasMaximas, optimos, caminosOptimos, largoRepisas):
 	caminosOptimos[idActual] = optimo_previo
 	return mejor_optimo
 
-def recuperar_solucion_optima(cajas, caminosOptimos, n):
+def recuperar_solucion_optima(cajas, caminosOptimos, alturasMaximas, n):
 	if(n <= 0):
 		return
-	
+	print(f"Altura Repisa:{altura_maxima(alturasMaximas, cajas, caminosOptimos[n] + 1, n)}" , end = '     ')
 	for j in range(caminosOptimos[n] + 1,n + 1):
-			print(cajas[j], end = ' ')
-	print("\n//////////////////////////////////////////////////////////\n")
-	recuperar_solucion_optima(cajas, caminosOptimos, caminosOptimos[n])
+			print(f"C{cajas[j]}", end = ' ')
+	print("\n//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n")
+	recuperar_solucion_optima(cajas, caminosOptimos, alturasMaximas, caminosOptimos[n])
 
 def main():
 	cajas = []
@@ -101,9 +101,11 @@ def main():
 
 	optimo_a_buscar = min(int(argv[1]), len(cajas) - 1)
 
-	optimos, caminosOptimos = ordenadar_almacen(optimo_a_buscar, int(argv[2]), cajas)
+	optimos, caminosOptimos, alturasMaximas = ordenadar_almacen(optimo_a_buscar, int(argv[2]), cajas)
 
-	recuperar_solucion_optima(cajas, caminosOptimos, optimo_a_buscar)
+	print("                     codigo caja:(altura caja / largo de caja) \n\n")
+
+	recuperar_solucion_optima(cajas, caminosOptimos, alturasMaximas, optimo_a_buscar)
 	print(f"\nla altura minima de las {optimo_a_buscar} cajas es : {optimos[optimo_a_buscar]}")
 
 main()
