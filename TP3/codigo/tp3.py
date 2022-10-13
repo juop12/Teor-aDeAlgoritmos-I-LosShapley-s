@@ -1,8 +1,8 @@
 from edmon_karps import edmond_karps
-from grafo_nuevo import *
+from grafo import *
 from csv import reader
 from sys import argv
-import pudb; pu.db
+#import pudb; pu.db
 
 EQUIPO1 = 'E1'
 EQUIPO2 = 'E2'
