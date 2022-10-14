@@ -1,5 +1,5 @@
 from edmon_karps import edmond_karps
-from grafo import *
+from grafo import Grafo
 from csv import reader
 from sys import argv
 #import pudb; pu.db
@@ -58,9 +58,9 @@ def recuperar_resultados(grafoResidual, flujoMaximo, sumaDePrecios):
 		
 	
 def main():
-	
+	ruta_archivo = argv[1]
 	grafo = Grafo([EQUIPO1,EQUIPO2], True)
-	grafo, sumaDePrecios, costosDeEquipo1, costosDeEquipo2, transferencias = levantar_proyectos_csv(grafo, "/home/pal/Desktop/tda/tpw/TeoriaDeAlgoritmos-I-LosShapleys/TP3/codigo/ejemplo1.csv")
+	grafo, sumaDePrecios, costosDeEquipo1, costosDeEquipo2, transferencias = levantar_proyectos_csv(grafo, ruta_archivo)
 	
 	insertar_deseabilidades(grafo, sumaDePrecios, costosDeEquipo1, costosDeEquipo2)
 	insertar_tansferencias(grafo, transferencias)
@@ -69,19 +69,9 @@ def main():
 
 	tareasRealizadasPorElEquipo1, tareasRealizadasPorElEquipo2, precioMinimo = recuperar_resultados(grafo, flujoMaximo, sumaDePrecios)
 
-	print("flujoMaximo ::", flujoMaximo)
 	print("tareasRealizadasPorElEquipo1 ::", tareasRealizadasPorElEquipo1)
 	print("tareasRealizadasPorElEquipo2 ::", tareasRealizadasPorElEquipo2)
 	print("precioMinimo ::", precioMinimo)
 
 main()
 
-
-
-"""def repartir_proyectos_entre_equipos(nombreDeArchivo):
-	grafo = Grafo(EQUIPO1, EQUIPO2, True)
-
-	levantar_proyectos_csv(grafo, nombreDeArchivo)
-
-
-repartir_proyectos_entre_equipos(argv[1])"""

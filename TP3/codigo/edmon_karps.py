@@ -1,19 +1,19 @@
-#import bfs.py
-from grafo_nuevo import *
+from grafo import *
+from cola import Cola
 #import pudb; pu.db
 
 def bfs(grafo, verticeInicial):
-    cola = [verticeInicial]
+    cola = Cola()
+    cola.encolar(verticeInicial)
     visitados = [verticeInicial]
 
     proveniencia = {}
-    while len(cola) > 0:
-        vertice = cola.pop(0)
-        print(vertice)
+    while cola.len() > 0:
+        vertice = cola.desencolar()
 
         for ady in grafo.adyacentes(vertice):
             if (ady not in visitados) and grafo.arista_peso(vertice, ady) != 0:
-                cola.append(ady)
+                cola.encolar(ady)
                 visitados.append(ady)
                 proveniencia[ady] = vertice
     return proveniencia
@@ -64,30 +64,3 @@ def edmond_karps(grafo, s, t):
         flujoTotal += flujoNuevo
         flujoNuevo = augment(grafo, s, t)
     return flujoTotal
-    
-
-def main():
-    l = ['a','b','c','d','E1','E2']
-    grafo = Grafo(l, True)
-
-    grafo.insertar_arista('E1','a',53)
-    grafo.insertar_arista('E1','b',63)
-    grafo.insertar_arista('E1','c',52)
-    grafo.insertar_arista('E1','d',51)
-    
-    grafo.insertar_arista('a','E2',64)
-    grafo.insertar_arista('b','E2',51)
-    grafo.insertar_arista('c','E2',64)
-    grafo.insertar_arista('d','E2',64)
-
-    grafo.insertar_arista('a','b',2)
-    grafo.insertar_arista('b','a',2)
-    grafo.insertar_arista('b','c',3)
-    grafo.insertar_arista('c','b',3)
-    grafo.insertar_arista('a','d',4)
-    grafo.insertar_arista('d','a',4)
-
-    yey = edmond_karps(grafo, 'E1', 'E2')
-    print(yey)
-        
-main()
